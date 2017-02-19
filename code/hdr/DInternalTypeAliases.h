@@ -53,6 +53,9 @@ using vlSharedPtr = std::shared_ptr<T>;
 // Namespaces comments:
 
 /// VolkPhetamine
-namespace VolkPhetamine {}
-/// VulkanWrappers
-namespace VulkanWrappers{}
+namespace VolkPhetamine {
+	/// VulkanWrappers
+	namespace VulkanWrappers {}
+	/// Utils
+	namespace Utils {}
+}

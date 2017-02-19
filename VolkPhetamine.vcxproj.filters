@@ -24,21 +24,24 @@
     <ClCompile Include="code\src\UErrorLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\src\CGPUDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="code\hdr\HSingleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="code\hdr\HInternalTypeAliases.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="code\hdr\CInputHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="code\hdr\UErrorLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="code\hdr\VulkanDeleter.h">
+    <ClInclude Include="code\hdr\CVulkanDeleter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\hdr\DInternalTypeAliases.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\hdr\CGPUDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

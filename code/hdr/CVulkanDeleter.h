@@ -9,22 +9,29 @@
 ////====================================================================================================================================////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
+
 /* Standard library includes */
+#include <functional>
 
 /* External dependencies */
 #include <vulkan\vulkan.h>
 
 /* Internal headers includes */
-#include "HInternalTypeAliases.h"
+#include "DInternalTypeAliases.h"
 
-/* Specific defines */
-
+//// ---- Namespaces ---- ////
 namespace VolkPhetamine {
-
 	namespace VulkanWrappers {
 
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////====================================================================================================================================////
+		//// CVulkanDeleter
+		/// \brief		Blabla
+		/// \details	Blabla
+		////====================================================================================================================================////
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		template <typename T>
-		class VulkanDeleter {
+		class CVulkanDeleter {
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//// ---- Members -----																													//// 
@@ -49,21 +56,21 @@ namespace VolkPhetamine {
 
 		public:
 		//// ---- Constructor/Destructor ---- ////
-			VulkanDeleter() : VulkanDeleter([](T, VkAllocationCallbacks*) {}) {}
+			CVulkanDeleter() : CVulkanDeleter([](T, VkAllocationCallbacks*) {}) {}
 
-			VulkanDeleter(std::function<void(T, VkAllocationCallbacks*)> a_deleteFunction) {
-				this->deleter = [=](T obj) { a_deleteFunction(obj, nullptr); };
+			CVulkanDeleter(std::function<void(T, VkAllocationCallbacks*)> a_deleteFunction) {
+				m_deleter = [=](T obj) { a_deleteFunction(obj, nullptr); };
 			}
 
-			VulkanDeleter(const VDeleter<VkInstance>& a_instance, std::function<void(VkInstance, T, VkAllocationCallbacks*)> a_deleteFunction) {
-				this->deleter = [&a_instance, a_deleteFunction](T obj) { a_deleteFunction(a_instance, obj, nullptr); };
+			CVulkanDeleter(const CVulkanDeleter<VkInstance>& a_instance, std::function<void(VkInstance, T, VkAllocationCallbacks*)> a_deleteFunction) {
+				m_deleter = [&a_instance, a_deleteFunction](T obj) { a_deleteFunction(a_instance, obj, nullptr); };
 			}
 
-			VulkanDeleter(const VDeleter<VkDevice>& a_device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> a_deleteFunction) {
-				this->deleter = [&a_device, a_deleteFunction](T obj) { a_deleteFunction(a_device, obj, nullptr); };
+			CVulkanDeleter(const CVulkanDeleter<VkDevice>& a_device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> a_deleteFunction) {
+				m_deleter = [&a_device, a_deleteFunction](T obj) { a_deleteFunction(a_device, obj, nullptr); };
 			}
 
-			~VulkanDeleter() {
+			~CVulkanDeleter() {
 				_cleanup();
 			}
 

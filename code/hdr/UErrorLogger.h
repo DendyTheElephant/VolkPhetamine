@@ -9,6 +9,7 @@
 ////====================================================================================================================================////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
+
 /* Standard library includes */
 #include <stack>
 #include <iostream>
@@ -16,8 +17,7 @@
 #include <string>
 
 /* Internal headers includes */
-#include "HInternalTypeAliases.h"
-#include "HSingleton.h"
+#include "DInternalTypeAliases.h"
 
 /* Specific defines */
 // Define __CURRENT_FUNCTION__ macro to call __func__ define for c++11 gcc or __FUNCTION__ defined for MSVSC!
@@ -36,67 +36,79 @@
 // Stack display message (file / line / function)
 #define __CONTEXT__ ("> File " __FILE__ ":"  PRINTVALUE(__LINE__) " in function " __CURRENT_FUNCTION__ "\n")
 
-#define VL_STACK_TRACE (&VolkPhetamine::UErrorLogger::getInstance())->stack(__CONTEXT__)
-#define VL_STACK_MESSAGE(message) (&VolkPhetamine::UErrorLogger::getInstance())->stackMessage(message,__CONTEXT__)
-#define VL_UNSTACK_TRACE (&VolkPhetamine::UErrorLogger::getInstance())->unstack()
-#define VL_ERROR(message) (&VolkPhetamine::UErrorLogger::getInstance())->displayAndCrash(message,__CONTEXT__)
-#define VL_ERROR_CONTINUE(message) (&VolkPhetamine::UErrorLogger::getInstance())->display(message,__CONTEXT__)
+#define VL_BEGIN_FUNCTION (&VolkPhetamine::Utils::UErrorLogger::getInstance())->stack(__CONTEXT__)
+#define VL_STACK_MESSAGE(message) (&VolkPhetamine::Utils::UErrorLogger::getInstance())->stackMessage(message,__CONTEXT__)
+#define VL_END_FUNCTION (&VolkPhetamine::Utils::UErrorLogger::getInstance())->unstack()
+#define VL_FATAL_ERROR(message) (&VolkPhetamine::Utils::UErrorLogger::getInstance())->displayAndCrash(message,__CONTEXT__)
+#define VL_ERROR(message) (&VolkPhetamine::Utils::UErrorLogger::getInstance())->display(message,__CONTEXT__)
 
+
+//// ---- Namespaces ---- ////
 namespace VolkPhetamine {
+	namespace Utils {
 
-	class UErrorLogger {//: public vlSingleton<UErrorLogger> {
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////====================================================================================================================================////
+		//// UErrorLogger
+		/// \brief		Blabla
+		/// \details	Blabla
+		////====================================================================================================================================////
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		class UErrorLogger {
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//// ---- Members -----																													//// 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	private:
-		vlBool m_isErrorStreamSpecified{ false }; ///< If Error's constructor is default, display error goes to print in cerr!
-		std::stack<vlString> m_errorCallStack;
-		std::ofstream m_outputStream;
-		const vlString M_STACK_TRACE_MARK = ">" ;
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			//// ---- Members -----																													//// 
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		private:
+			vlBool m_isErrorStreamSpecified{ false }; ///< If Error's constructor is default, display error goes to print in cerr!
+			std::stack<vlString> m_errorCallStack;
+			std::ofstream m_outputStream;
+			const vlString M_STACK_TRACE_MARK = ">";
 
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//// ---- Methods -----																													////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	private:
-	//// ---- Constructor/Destructor ---- ////
-		UErrorLogger() {/* VOID */ };
-		~UErrorLogger();
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			//// ---- Methods -----																													////
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		private:
+			//// ---- Constructor/Destructor ---- ////
+			UErrorLogger() {/* VOID */ };
+			~UErrorLogger();
 
-	public:
-	//// ---- Setter ---- ////
-		void setOutputFile(vlString fileName);
+		public:
+			//// ---- Setter ---- ////
+			void setOutputFile(vlString fileName);
 
-	//// ---- Core ---- ////
-		void display(vlString errorMessage, vlString context);
-		void displayAndCrash(vlString errorMessage, vlString context);
+			//// ---- Core ---- ////
+			void display(vlString errorMessage, vlString context);
+			void displayAndCrash(vlString errorMessage, vlString context);
 
-		/// Called from VK_STACK_TRACE: push function context into the stack
-		void stack(vlString a_context) {
-			m_errorCallStack.push(M_STACK_TRACE_MARK);
-			m_errorCallStack.push(a_context);
-		}
+			/// Called from VK_STACK_TRACE: push function context into the stack
+			void stack(vlString a_context) {
+				m_errorCallStack.push(M_STACK_TRACE_MARK);
+				m_errorCallStack.push(a_context);
+			}
 
-		/// Called from VK_STACK_MESSAGE: push message in current context into the stack
-		void stackMessage(vlString a_message, vlString a_context) {
-			m_errorCallStack.push(a_context + " " + a_message + "\n");
-		}
+			/// Called from VK_STACK_MESSAGE: push message in current context into the stack
+			void stackMessage(vlString a_message, vlString a_context) {
+				m_errorCallStack.push(a_context + " " + a_message + "\n");
+			}
 
-		/// Called from VK_UNSTACK_TRACE: pop up messages and last context off the stack
-		void unstack() {
-			// Drop message stack and call
-			while (m_errorCallStack.top() != M_STACK_TRACE_MARK) {
+			/// Called from VK_UNSTACK_TRACE: pop up messages and last context off the stack
+			void unstack() {
+				// Drop message stack and call
+				while (m_errorCallStack.top() != M_STACK_TRACE_MARK) {
+					if (!m_errorCallStack.empty())
+						m_errorCallStack.pop();
+				}
+				// Drop stack trace marker
 				if (!m_errorCallStack.empty())
 					m_errorCallStack.pop();
 			}
-			// Drop stack trace marker
-			if (!m_errorCallStack.empty())
-				m_errorCallStack.pop();
-		}
 
-	//// ---- Static ---- ////
-		static UErrorLogger& getInstance();
-		static void destroyInstance();
-	};
+			//// ---- Static ---- ////
+			static UErrorLogger& getInstance();
+			static void destroyInstance();
+			static void glfwErrorCallback(vlInt error, const char* description);
+		};
+	}
 }
